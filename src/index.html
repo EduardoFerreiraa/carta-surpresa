@@ -296,7 +296,7 @@ function getConfig(){
   return {to, from, start, msg, images};
 }
 
-let currentConfig = JSON.parse(localStorage.getItem('loveConfig')||JSON.stringify(DEFAULTS));
+let currentConfig = {...DEFAULTS}; // sempre volta ao padrão
 
 // contador
 function diffYMD(startDate){
@@ -314,9 +314,6 @@ function diffYMD(startDate){
 
   return {days: daysTotal, months, years};
 }
-
-
-
 
 // renderiza galeria com botão de excluir
 function render(images=null){
