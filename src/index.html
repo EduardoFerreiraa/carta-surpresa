@@ -266,6 +266,7 @@ const elYears = document.getElementById('years');
 const elHeadline = document.getElementById('headline');
 const elDecl = document.getElementById('declaration');
 const elGallery = document.getElementById('gallery');
+const elSender = document.getElementById('senderName'); // elemento do autor
 
 const modal = document.getElementById('modal');
 const openBtn = document.getElementById('openConfig');
@@ -314,11 +315,15 @@ function diffYMD(startDate){
   return {days: daysTotal, months, years};
 }
 
-// Renderiza galeria e contador
+// Renderiza galeria, contador e autor
 function render(images=null){
   const cfg = currentConfig;
   elHeadline.textContent = cfg.to || 'Oi, amor!';
   elDecl.textContent = cfg.msg || DEFAULTS.msg;
+
+  // Atualiza o autor
+  elSender.textContent = cfg.from || DEFAULTS.from;
+
   const d = diffYMD(cfg.start);
   elDays.textContent = d.days;
   elMonths.textContent = d.months;
@@ -410,7 +415,6 @@ function buildLink(){
     if(img.startsWith('http')){
       params.set('img'+(i+1), img);
     } else if(img.startsWith('data:')){
-      // converte dataURL em Blob e URL temporária
       const byteString = atob(img.split(',')[1]);
       const mime = img.match(/data:(.*);base64/)[1];
       const ab = new ArrayBuffer(byteString.length);
@@ -462,6 +466,7 @@ if(linkCfg && (linkCfg.to || linkCfg.from || linkCfg.start || linkCfg.msg || lin
 render(currentConfig.images);
 if(qpGet('to')) document.getElementById('sub').textContent = `Esta surpresa foi feita com carinho só para você, ${qp.get('to')} ✨`;
 </script>
+
 
 
 </body>
