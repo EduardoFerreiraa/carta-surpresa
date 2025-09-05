@@ -266,7 +266,6 @@ const elYears = document.getElementById('years');
 const elHeadline = document.getElementById('headline');
 const elDecl = document.getElementById('declaration');
 const elGallery = document.getElementById('gallery');
-const elSender = document.getElementById('senderName');
 
 const modal = document.getElementById('modal');
 const openBtn = document.getElementById('openConfig');
@@ -285,7 +284,7 @@ const applyBtn = document.getElementById('applyChanges');
 const qp = new URLSearchParams(location.search);
 function qpGet(name){ const val = qp.get(name); return val && val.trim() !== '' ? val : null; }
 
-// pega configuração do link (só fotos online)
+// Pega configuração do link (só fotos online)
 function getConfigFromURL(){
   const to = qpGet('to');
   const from = qpGet('from');
@@ -301,7 +300,7 @@ function getConfigFromURL(){
 
 let currentConfig = {...DEFAULTS};
 
-// contador de dias, meses e anos
+// Contador de dias, meses e anos
 function diffYMD(startDate){
   if(!startDate) return {days:0, months:0, years:0};
   const s = new Date(startDate);
@@ -315,12 +314,11 @@ function diffYMD(startDate){
   return {days: daysTotal, months, years};
 }
 
-// renderiza galeria, contador e autor
+// Renderiza galeria e contador
 function render(images=null){
   const cfg = currentConfig;
   elHeadline.textContent = cfg.to || 'Oi, amor!';
   elDecl.textContent = cfg.msg || DEFAULTS.msg;
-  elSender.textContent = cfg.from || DEFAULTS.from; // adiciona autor
   const d = diffYMD(cfg.start);
   elDays.textContent = d.days;
   elMonths.textContent = d.months;
@@ -375,7 +373,7 @@ function render(images=null){
   });
 }
 
-// aplicar alterações
+// Aplicar alterações
 applyBtn.addEventListener('click', ()=>{
   const imgs = inpImgs.value.split(/\n|\r/).filter(s=>s.startsWith('http'));
   currentConfig = {
@@ -386,10 +384,10 @@ applyBtn.addEventListener('click', ()=>{
     images: [...imgs, ...currentConfig.images.filter(i=>i.startsWith('data:'))]
   };
   render(currentConfig.images);
-  status.textContent='Alterações aplicadas!';
+  status.textContent='Alterações aplicadas! Agora você pode gerar o link';
 });
 
-// carregar formulário
+// Carregar formulário
 function loadFormFromConfig(){
   inpTo.value = currentConfig.to;
   inpFrom.value = currentConfig.from;
@@ -399,7 +397,7 @@ function loadFormFromConfig(){
   render(currentConfig.images);
 }
 
-// gerar link
+// Gerar link (converte fotos locais em URLs temporárias)
 function buildLink(){
   const u = new URL(location.href.split('#')[0]);
   const params = new URLSearchParams();
@@ -407,27 +405,43 @@ function buildLink(){
   if(currentConfig.from) params.set('from', currentConfig.from);
   if(currentConfig.start) params.set('start', currentConfig.start);
   if(currentConfig.msg) params.set('msg', encodeURIComponent(currentConfig.msg));
-  currentConfig.images.filter(i=>i.startsWith('http')).forEach((url,i)=> params.set('img'+(i+1), url));
+
+  currentConfig.images.forEach((img, i)=>{
+    if(img.startsWith('http')){
+      params.set('img'+(i+1), img);
+    } else if(img.startsWith('data:')){
+      // converte dataURL em Blob e URL temporária
+      const byteString = atob(img.split(',')[1]);
+      const mime = img.match(/data:(.*);base64/)[1];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for(let j=0;j<byteString.length;j++) ia[j]=byteString.charCodeAt(j);
+      const blob = new Blob([ab], {type:mime});
+      const url = URL.createObjectURL(blob);
+      params.set('img'+(i+1), url);
+    }
+  });
+
   u.search = params.toString();
   return u.toString();
 }
 
 document.getElementById('genLink').addEventListener('click', ()=>{
   const link = buildLink();
-  out.value = link;
-  status.textContent = 'Link gerado! ✅';
+  out.value=link;
+  status.textContent='Link gerado! ✅';
 });
 
 document.getElementById('copyLink').addEventListener('click', async ()=>{
-  if(!out.value) out.value = buildLink();
+  if(!out.value) out.value=buildLink();
   try{ await navigator.clipboard.writeText(out.value); status.textContent='Copiado ✅'; }
   catch(e){ status.textContent='Não foi possível copiar :('; }
 });
 
-openBtn.addEventListener('click', ()=>{ modal.classList.add('open'); loadFormFromConfig(); });
-closeBtn.addEventListener('click', ()=> modal.classList.remove('open'));
+openBtn.addEventListener('click', ()=>{modal.classList.add('open'); loadFormFromConfig();});
+closeBtn.addEventListener('click', ()=>modal.classList.remove('open'));
 
-// upload fotos locais
+// Upload fotos locais
 inpFiles.addEventListener('change', (e)=>{
   const files = Array.from(e.target.files);
   files.forEach(file=>{
@@ -440,16 +454,15 @@ inpFiles.addEventListener('change', (e)=>{
   });
 });
 
-// inicial
+// Inicial
 const linkCfg = getConfigFromURL();
 if(linkCfg && (linkCfg.to || linkCfg.from || linkCfg.start || linkCfg.msg || linkCfg.images.length>0)){
-  currentConfig = {...DEFAULTS,...linkCfg};
-} else {
-  currentConfig = {...DEFAULTS}; // volta ao zero ao atualizar
+  currentConfig = {...DEFAULTS, ...linkCfg};
 }
 render(currentConfig.images);
 if(qpGet('to')) document.getElementById('sub').textContent = `Esta surpresa foi feita com carinho só para você, ${qp.get('to')} ✨`;
 </script>
+
 
 </body>
 </html>
