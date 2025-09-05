@@ -126,6 +126,22 @@
 }
 .delete-btn:hover{ background:var(--accent-2); }
 
+/* Scroll custom */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff6ec4, #7873f5);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff85d8, #9a8cff);
+}
+
   </style>
 </head>
 <body>
@@ -234,11 +250,12 @@
   <!-- Substitua seu script atual por este -->
 <script>
 const DEFAULTS = {
-  to:'amor', from:'Seu amor', start:'2023-06-12',
+  to:'amor',
+  from:'Seu amor',
+  start:'', // agora começa sem data
   msg:`Eu te amo mais a cada dia.\nObrigado por todos os sorrisos, abraços e sonhos que dividimos.\nVocê é o meu lugar favorito. ❤️`,
-  images:[null,null,null] // placeholders
+  images:[] // começa SEM fotos
 };
-
 
 const elDays = document.getElementById('days');
 const elMonths = document.getElementById('months');
@@ -291,13 +308,13 @@ function diffYMD(startDate){
   const msTotal = now - s;
   const daysTotal = Math.floor(msTotal / (1000*60*60*24));
 
-  // anos e meses aproximados
   let years = Math.floor(daysTotal / 365.25);
   let months = Math.floor((daysTotal - years*365.25)/30.437);
   let days = Math.floor(daysTotal - years*365.25 - months*30.437);
 
   return {days: daysTotal, months, years};
 }
+
 
 
 
