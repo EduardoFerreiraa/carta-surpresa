@@ -37,7 +37,7 @@ body{
   line-height:1.6;
 }
 a{color:inherit}
-.container{max-width:1100px;margin:0 auto;padding:22px}
+.container{max-width:1100px;margin:0 auto;padding:22px;overflow-x:hidden}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;flex-wrap:wrap}
 .brand{display:flex;gap:10px;align-items:center;font-weight:700;letter-spacing:.4px}
 .brand .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;box-shadow:var(--shadow-soft)}
@@ -72,8 +72,8 @@ p.lead{font-size:clamp(14px,2.4vw,18px);color:var(--muted)}
 .section{margin:40px 0}
 
 .declaration {
-  font-size: clamp(18px, 2.8vw, 22px);
-  min-height: 90px;
+  font-size: clamp(16px, 2.5vw, 20px);
+  min-height: 80px;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -91,6 +91,7 @@ p.lead{font-size:clamp(14px,2.4vw,18px);color:var(--muted)}
 /* Surprise hearts */
 .hearts{pointer-events:none;position:fixed;inset:0;overflow:hidden;z-index:50}
 .heart{position:absolute;font-size:22px;animation:float 4.2s linear forwards;filter:drop-shadow(0 8px 20px rgba(225,29,72,.45))}
+
 @keyframes float{0%{transform:translateY(110vh) scale(.8) rotate(0)} 100%{transform:translateY(-10vh) scale(1.2) rotate(360deg);opacity:0}}
 
 /* Config modal */
@@ -136,19 +137,20 @@ textarea{min-height:110px;resize:vertical}
 
 /* Responsividade adicional para celulares menores */
 @media (max-width: 500px){
-  .container{padding:14px;}
-  h1{font-size:clamp(24px,7vw,40px);}
-  h2{font-size:clamp(18px,5vw,26px);}
-  .declaration{font-size:clamp(16px,4vw,20px);}
+  .container{padding:14px;overflow-x:hidden;}
+  h1{font-size:clamp(22px,8vw,36px);}
+  h2{font-size:clamp(16px,5vw,24px);}
+  .declaration{font-size:clamp(14px,4vw,18px);padding:0 10px;}
   .hero{gap:16px;}
   .cta{flex-direction:column;gap:10px;}
-  .card{padding:18px;border-radius:16px;}
+  .card{padding:16px;border-radius:16px;}
   .stats{grid-template-columns:1fr;}
-  .gallery{grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;}
+  .gallery{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
   .photo{border-radius:14px;}
-  .modal .panel{width:95vw;padding:16px;}
+  .modal .panel{width:95vw;padding:14px;}
 }
 </style>
+
 
 </head>
 <body>
