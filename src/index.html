@@ -255,9 +255,9 @@
 const DEFAULTS = {
   to:'amor',
   from:'Seu amor',
-  start:'', // agora começa sem data
+  start:'',
   msg:`Eu te amo mais a cada dia.\nObrigado por todos os sorrisos, abraços e sonhos que dividimos.\nVocê é o meu lugar favorito. ❤️`,
-  images:[] // começa SEM fotos
+  images:[]
 };
 
 const elDays = document.getElementById('days');
@@ -265,8 +265,8 @@ const elMonths = document.getElementById('months');
 const elYears = document.getElementById('years');
 const elHeadline = document.getElementById('headline');
 const elDecl = document.getElementById('declaration');
-const elSender = document.getElementById('senderName');
 const elGallery = document.getElementById('gallery');
+const elSender = document.getElementById('senderName');
 
 const modal = document.getElementById('modal');
 const openBtn = document.getElementById('openConfig');
@@ -285,127 +285,99 @@ const applyBtn = document.getElementById('applyChanges');
 const qp = new URLSearchParams(location.search);
 function qpGet(name){ const val = qp.get(name); return val && val.trim() !== '' ? val : null; }
 
-function getConfig(){
-  let saved = localStorage.getItem("loveConfig");
-  if(saved){
-    try { return JSON.parse(saved); } catch(e){}
-  }
-  const to = qpGet('to') || DEFAULTS.to;
-  const from = qpGet('from') || DEFAULTS.from;
-  const start = qpGet('start') || DEFAULTS.start;
-  const msg = qpGet('msg') ? decodeURIComponent(qp.get('msg')) : DEFAULTS.msg;
+// pega configuração do link (só fotos online)
+function getConfigFromURL(){
+  const to = qpGet('to');
+  const from = qpGet('from');
+  const start = qpGet('start');
+  const msg = qpGet('msg') ? decodeURIComponent(qp.get('msg')) : null;
   const images = [];
-  for(let i=1;i<=50;i++){ const key = `img${i}`; if(qpGet(key)) images.push(qp.get(key)); }
+  for(let i=1;i<=50;i++){
+    const key = `img${i}`;
+    if(qpGet(key)) images.push(qp.get(key));
+  }
   return {to, from, start, msg, images};
 }
 
-let currentConfig = {...DEFAULTS}; // sempre volta ao padrão
+let currentConfig = {...DEFAULTS};
 
-// contador
+// contador de dias, meses e anos
 function diffYMD(startDate){
   if(!startDate) return {days:0, months:0, years:0};
   const s = new Date(startDate);
   if(isNaN(s)) return {days:0, months:0, years:0};
-
   const now = new Date();
   const msTotal = now - s;
   const daysTotal = Math.floor(msTotal / (1000*60*60*24));
-
   let years = Math.floor(daysTotal / 365.25);
   let months = Math.floor((daysTotal - years*365.25)/30.437);
   let days = Math.floor(daysTotal - years*365.25 - months*30.437);
-
   return {days: daysTotal, months, years};
 }
 
-// renderiza galeria com botão de excluir
+// renderiza galeria, contador e autor
 function render(images=null){
   const cfg = currentConfig;
-
   elHeadline.textContent = cfg.to || 'Oi, amor!';
   elDecl.textContent = cfg.msg || DEFAULTS.msg;
-
-  // atualiza contador com diffYMD
+  elSender.textContent = cfg.from || DEFAULTS.from; // adiciona autor
   const d = diffYMD(cfg.start);
   elDays.textContent = d.days;
   elMonths.textContent = d.months;
   elYears.textContent = d.years;
-
-  // galeria
+  
   elGallery.innerHTML = '';
   const imgs = images || cfg.images;
-
   elGallery.style.display = 'grid';
   elGallery.style.gridTemplateColumns = 'repeat(3, 1fr)';
   elGallery.style.gap = '12px';
 
-  imgs.forEach((url, idx) => {
+  imgs.forEach((url, idx)=>{
     const div = document.createElement('div');
-    div.className = 'photo';
-    div.style.position = 'relative';
-
+    div.className='photo';
+    div.style.position='relative';
     if(url){
       const img = document.createElement('img');
       img.src = url;
-      img.style.width = '100%';
-      img.style.borderRadius = '8px';
-      img.style.display = 'block';
+      img.style.width='100%';
+      img.style.borderRadius='8px';
+      img.style.display='block';
       div.appendChild(img);
 
-      // botão excluir
       const btn = document.createElement('button');
-      btn.textContent = '×';
-      btn.className = 'delete-btn';
-      btn.style.position = 'absolute';
-      btn.style.top = '6px';
-      btn.style.right = '6px';
-      btn.style.background = 'rgba(0,0,0,0.5)';
-      btn.style.color = 'white';
-      btn.style.border = 'none';
-      btn.style.borderRadius = '50%';
-      btn.style.width = '24px';
-      btn.style.height = '24px';
-      btn.style.cursor = 'pointer';
-      btn.onclick = () => {
-        currentConfig.images.splice(idx, 1);
-        localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
+      btn.textContent='×';
+      btn.style.position='absolute';
+      btn.style.top='6px';
+      btn.style.right='6px';
+      btn.style.background='rgba(0,0,0,0.5)';
+      btn.style.color='white';
+      btn.style.border='none';
+      btn.style.borderRadius='50%';
+      btn.style.width='24px';
+      btn.style.height='24px';
+      btn.style.cursor='pointer';
+      btn.onclick=()=>{ 
+        currentConfig.images.splice(idx,1);
         render(currentConfig.images);
       };
       div.appendChild(btn);
-
     } else {
-      // placeholder de foto
-      div.textContent = '📷';
-      div.style.fontSize = '2rem';
-      div.style.color = 'rgba(255,255,255,.3)';
-      div.style.display = 'grid';
-      div.style.placeItems = 'center';
-      div.style.aspectRatio = '1/1';
-      div.style.borderRadius = '8px';
-      div.style.background = 'rgba(255,255,255,0.05)';
+      div.textContent='📷';
+      div.style.fontSize='2rem';
+      div.style.color='rgba(255,255,255,.3)';
+      div.style.display='grid';
+      div.style.placeItems='center';
+      div.style.aspectRatio='1/1';
+      div.style.borderRadius='8px';
+      div.style.background='rgba(255,255,255,0.05)';
     }
-
     elGallery.appendChild(div);
   });
 }
 
-
-function typeText(el, text, speed=28){
-  el.innerHTML='';
-  let i=0;
-  function step(){ 
-    if(i<=text.length){ 
-      el.textContent=text.slice(0,i); 
-      i++; 
-      requestAnimationFrame(()=>setTimeout(step,speed)); 
-    } 
-  }
-  step();
-}
-
 // aplicar alterações
 applyBtn.addEventListener('click', ()=>{
-  const imgs = inpImgs.value.split(/\n|\r/).filter(Boolean);
+  const imgs = inpImgs.value.split(/\n|\r/).filter(s=>s.startsWith('http'));
   currentConfig = {
     to: inpTo.value.trim() || DEFAULTS.to,
     from: inpFrom.value.trim() || DEFAULTS.from,
@@ -413,22 +385,21 @@ applyBtn.addEventListener('click', ()=>{
     msg: inpMsg.value.trim() || DEFAULTS.msg,
     images: [...imgs, ...currentConfig.images.filter(i=>i.startsWith('data:'))]
   };
-  localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
   render(currentConfig.images);
-  status.textContent = 'Alterações aplicadas!';
+  status.textContent='Alterações aplicadas!';
 });
 
+// carregar formulário
 function loadFormFromConfig(){
   inpTo.value = currentConfig.to;
   inpFrom.value = currentConfig.from;
   inpStart.value = currentConfig.start;
   inpMsg.value = currentConfig.msg;
-  const imgs = currentConfig.images.filter(i=>i.startsWith('http'));
-  inpImgs.value = imgs.join('\n');
+  inpImgs.value = currentConfig.images.filter(i=>i.startsWith('http')).join('\n');
   render(currentConfig.images);
 }
 
-// gerar link só com URLs
+// gerar link
 function buildLink(){
   const u = new URL(location.href.split('#')[0]);
   const params = new URLSearchParams();
@@ -436,8 +407,7 @@ function buildLink(){
   if(currentConfig.from) params.set('from', currentConfig.from);
   if(currentConfig.start) params.set('start', currentConfig.start);
   if(currentConfig.msg) params.set('msg', encodeURIComponent(currentConfig.msg));
-  const imgs = currentConfig.images.filter(s=>s.startsWith('http')).slice(0,50);
-  imgs.forEach((url,i)=> params.set('img'+(i+1), url));
+  currentConfig.images.filter(i=>i.startsWith('http')).forEach((url,i)=> params.set('img'+(i+1), url));
   u.search = params.toString();
   return u.toString();
 }
@@ -445,8 +415,7 @@ function buildLink(){
 document.getElementById('genLink').addEventListener('click', ()=>{
   const link = buildLink();
   out.value = link;
-  status.textContent = 'Link gerado!';
-  render(currentConfig.images);
+  status.textContent = 'Link gerado! ✅';
 });
 
 document.getElementById('copyLink').addEventListener('click', async ()=>{
@@ -463,28 +432,24 @@ inpFiles.addEventListener('change', (e)=>{
   const files = Array.from(e.target.files);
   files.forEach(file=>{
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = ev=>{
       currentConfig.images.push(ev.target.result);
-      localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
       render(currentConfig.images);
     };
     reader.readAsDataURL(file);
   });
 });
 
-// textarea links muda
-inpImgs.addEventListener('input', ()=>{
-  const imgs = inpImgs.value.split(/\n|\r/).filter(s=>s.startsWith('http'));
-  currentConfig.images = imgs.concat(currentConfig.images.filter(i=>i.startsWith('data:')));
-  localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
-  render(currentConfig.images);
-});
-
 // inicial
+const linkCfg = getConfigFromURL();
+if(linkCfg && (linkCfg.to || linkCfg.from || linkCfg.start || linkCfg.msg || linkCfg.images.length>0)){
+  currentConfig = {...DEFAULTS,...linkCfg};
+} else {
+  currentConfig = {...DEFAULTS}; // volta ao zero ao atualizar
+}
 render(currentConfig.images);
 if(qpGet('to')) document.getElementById('sub').textContent = `Esta surpresa foi feita com carinho só para você, ${qp.get('to')} ✨`;
 </script>
-
 
 </body>
 </html>
