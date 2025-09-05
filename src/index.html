@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surpresa Para Você ❤️</title>
+  <meta name="description" content="Site romântico personalizável: fotos, contador de tempo juntos e declaração de amor." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+   <style>
+    :root{
+      --bg: #0b0b0f;
+      --bg-soft: #111118;
+      --card: #14141c;
+      --text: #f5f5f7;
+      --muted: #b7b7c2;
+      --accent: #e11d48;
+      --accent-2: #f43f5e;
+      --ring: rgba(225,29,72,.45);
+      --shadow: 0 20px 50px rgba(0,0,0,.55);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,.35);
+      --radius-xl: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;  background: radial-gradient(1200px 800px at 80% -10%, rgba(225,29,72,.08), transparent 60%),
+              radial-gradient(1000px 700px at -10% 20%, rgba(244,63,94,.06), transparent 55%),
+              var(--bg);
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* deixa fixo mesmo ao rolar */
+        background-size: cover; /* cobre toda a tela */
+      color:var(--text); font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height:1.6;
+    }
+    a{color:inherit}
+    .container{max-width:1100px;margin:0 auto;padding:22px}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:700;letter-spacing:.4px}
+    .brand .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;box-shadow:var(--shadow-soft)}
+    .brand .logo span{font-weight:800}
+    .pill{padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(225,29,72,.15),rgba(244,63,94,.12));border:1px solid rgba(225,29,72,.25);backdrop-filter:blur(4px);box-shadow:var(--shadow-soft)}
+
+    .hero{display:grid;grid-template-columns:1fr;gap:26px;align-items:center}
+
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.00));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);padding:26px;box-shadow:var(--shadow)}
+    .card.soft{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01))}
+
+    h1{font-family:"Playfair Display", serif;font-size:clamp(28px,5vw,52px);line-height:1.08;margin:10px 0 12px}
+    h2{font-size:clamp(20px,3.5vw,30px);margin:0 0 8px}
+    p.lead{font-size:clamp(14px,2.4vw,18px);color:var(--muted)}
+
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .btn{padding:12px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));color:var(--text);font-weight:600;cursor:pointer;transition:.25s transform,.25s filter,.25s background}
+    .btn:hover{transform:translateY(-2px)}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;box-shadow:0 8px 28px rgba(225,29,72,.35)}
+    .btn.ghost{background:transparent}
+
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+    @media (max-width: 650px){.stats{grid-template-columns:1fr 1fr}}
+    .stat{padding:18px;border-radius:18px;background:var(--card);border:1px solid rgba(255,255,255,.05)}
+    .stat .num{font-size:28px;font-weight:800}
+    .stat .label{color:var(--muted);font-size:13px}
+
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:12px}
+    .photo{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:1/1;background:#0e0e14;border:1px solid rgba(255,255,255,.06)}
+    .photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+
+    .section{margin:40px 0}
+
+    .declaration {
+    font-size: clamp(18px, 2.8vw, 22px);
+    min-height: 90px;
+    white-space: pre-wrap;
+    word-wrap: break-word; /* quebra palavras longas */
+    overflow-wrap: break-word; /* compatibilidade */
+    width: 100%; /* garante que respeite a largura do pai */
+    box-sizing: border-box;
+    padding: 0 12px; /* dá um espaço interno para não encostar nas bordas */
+}
+
+    .type-cursor{display:inline-block;width:10px;background:var(--accent);height:1.1em;margin-left:4px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    .footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .sender{font-weight:700}
+
+    /* Surprise hearts */
+    .hearts{pointer-events:none;position:fixed;inset:0;overflow:hidden;z-index:50}
+    .heart{position:absolute;font-size:22px;animation:float 4.2s linear forwards;filter:drop-shadow(0 8px 20px rgba(225,29,72,.45))}
+    @keyframes float{0%{transform:translateY(110vh) scale(.8) rotate(0)} 100%{transform:translateY(-10vh) scale(1.2) rotate(360deg);opacity:0}}
+
+    /* Config modal */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:60}
+    .modal.open{display:grid}
+    .modal .panel{
+      width:min(820px,92vw);
+      max-height:90vh;
+      overflow-y:auto;
+      border-radius:22px;
+      background:var(--bg-soft);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width: 800px){.grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:8px}
+    .field label{font-size:13px;color:var(--muted)}
+    .input, textarea{padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid rgba(255,255,255,.07);color:var(--text)}
+    textarea{min-height:110px;resize:vertical}
+    .help{font-size:12px;color:var(--muted)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:12px}
+
+    .hr{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);margin:16px 0}
+    .muted{color:var(--muted)}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(225,29,72,.14);border:1px solid rgba(225,29,72,.3)}
+    .delete-btn{
+  position:absolute; top:4px; right:4px;
+  background:rgba(225,29,72,.8); border:none; color:#fff;
+  border-radius:50%; width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; cursor:pointer;
+}
+.delete-btn:hover{ background:var(--accent-2); }
+
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+  <header class="container nav">
+    <div class="brand">
+      <div class="logo"><span>💌</span></div>
+      <div>Surpresa <span class="muted">Dark ❤</span></div>
+    </div>
+    <button class="pill btn ghost" id="openConfig">Personalizar & Gerar Link</button>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="card">
+        <span class="badge">Fiz algo especial para você ❤️</span>
+        <h1 id="headline">Oi, amor!</h1>
+        <p class="lead" id="sub">Preparei uma surpresa com nossas lembranças, palavras do coração e um contador do nosso tempo juntinhos.</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="num" id="days">—</div>
+            <div class="label">dias juntos</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="months">—</div>
+            <div class="label">meses</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="years">—</div>
+            <div class="label">anos</div>
+          </div>
+        </div>
+        <div class="section gallery" id="gallery"></div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Minha declaração</h2>
+      <div id="declaration" class="declaration"></div><span class="type-cursor" id="cursor"></span>
+    </section>
+
+    <section class="section card">
+      <div class="footer">
+        <div>
+          <div class="muted">Com amor,</div>
+          <div class="sender" id="senderName">Seu amor</div>
+        </div>
+        <div class="muted">Compartilhe o link acima para enviar 💘</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Personalização / Gerador de Link -->
+  <div class="modal" id="modal">
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+  <h2 style="margin:0">Personalizar & Gerar Link</h2>
+  <div style="display:flex;gap:8px">
+    <button class="btn primary" id="applyChanges">Aplicar alterações</button>
+    <button class="btn ghost" id="closeConfig">Fechar</button>
+  </div>
+</div>
+
+      <div class="hr"></div>
+      <div class="grid">
+        <div class="field">
+          <label>Nome da pessoa amada (aparece no título)</label>
+          <input class="input" id="inpTo" placeholder="Ex.: Maria" />
+          <span class="help">Query param: <code>to</code></span>
+        </div>
+        <div class="field">
+          <label>Seu nome (assinatura)</label>
+          <input class="input" id="inpFrom" placeholder="Ex.: Eduardo" />
+          <span class="help">Query param: <code>from</code></span>
+        </div>
+        <div class="field">
+          <label>Data que começaram a namorar</label>
+          <input class="input" id="inpStart" type="date" />
+          <span class="help">Query param: <code>start</code> (YYYY-MM-DD)</span>
+        </div>
+        <div class="field">
+          <label>Declaração de amor</label>
+          <textarea id="inpMsg" placeholder="Escreva sua mensagem..."></textarea>
+          <span class="help">Query param: <code>msg</code> (suporta quebras de linha)</span>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>Fotos (upload ou links)</label>
+          <input type="file" id="inpFiles" multiple accept="image/*">
+          <textarea id="inpImgs" placeholder="Ou cole URLs das fotos aqui..." style="margin-top:6px"></textarea>
+          <span class="help">Você pode enviar quantas fotos quiser!</span>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn primary" id="genLink">Gerar link personalizado</button>
+        <button class="btn" id="copyLink">Copiar link</button>
+        <span class="chip" id="status">—</span>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Link gerado</label>
+        <input class="input" id="outLink" readonly />
+      </div>
+    </div>
+  </div>
+
+  <!-- Substitua seu script atual por este -->
+<script>
+const DEFAULTS = {
+  to:'amor', from:'Seu amor', start:'2023-06-12',
+  msg:`Eu te amo mais a cada dia.\nObrigado por todos os sorrisos, abraços e sonhos que dividimos.\nVocê é o meu lugar favorito. ❤️`,
+  images:[null,null,null] // placeholders
+};
+
+
+const elDays = document.getElementById('days');
+const elMonths = document.getElementById('months');
+const elYears = document.getElementById('years');
+const elHeadline = document.getElementById('headline');
+const elDecl = document.getElementById('declaration');
+const elSender = document.getElementById('senderName');
+const elGallery = document.getElementById('gallery');
+
+const modal = document.getElementById('modal');
+const openBtn = document.getElementById('openConfig');
+const closeBtn = document.getElementById('closeConfig');
+const out = document.getElementById('outLink');
+const status = document.getElementById('status');
+
+const inpTo = document.getElementById('inpTo');
+const inpFrom = document.getElementById('inpFrom');
+const inpStart = document.getElementById('inpStart');
+const inpMsg = document.getElementById('inpMsg');
+const inpImgs = document.getElementById('inpImgs');
+const inpFiles = document.getElementById('inpFiles');
+const applyBtn = document.getElementById('applyChanges');
+
+const qp = new URLSearchParams(location.search);
+function qpGet(name){ const val = qp.get(name); return val && val.trim() !== '' ? val : null; }
+
+function getConfig(){
+  let saved = localStorage.getItem("loveConfig");
+  if(saved){
+    try { return JSON.parse(saved); } catch(e){}
+  }
+  const to = qpGet('to') || DEFAULTS.to;
+  const from = qpGet('from') || DEFAULTS.from;
+  const start = qpGet('start') || DEFAULTS.start;
+  const msg = qpGet('msg') ? decodeURIComponent(qp.get('msg')) : DEFAULTS.msg;
+  const images = [];
+  for(let i=1;i<=50;i++){ const key = `img${i}`; if(qpGet(key)) images.push(qp.get(key)); }
+  return {to, from, start, msg, images};
+}
+
+let currentConfig = JSON.parse(localStorage.getItem('loveConfig')||JSON.stringify(DEFAULTS));
+
+// contador
+function diffYMD(startDate){
+  if(!startDate) return {days:0, months:0, years:0};
+  const s = new Date(startDate);
+  if(isNaN(s)) return {days:0, months:0, years:0};
+
+  const now = new Date();
+  const msTotal = now - s;
+  const daysTotal = Math.floor(msTotal / (1000*60*60*24));
+
+  // anos e meses aproximados
+  let years = Math.floor(daysTotal / 365.25);
+  let months = Math.floor((daysTotal - years*365.25)/30.437);
+  let days = Math.floor(daysTotal - years*365.25 - months*30.437);
+
+  return {days: daysTotal, months, years};
+}
+
+
+
+// renderiza galeria com botão de excluir
+function render(images=null){
+  const cfg = currentConfig;
+
+  elHeadline.textContent = cfg.to || 'Oi, amor!';
+  elDecl.textContent = cfg.msg || DEFAULTS.msg;
+
+  // atualiza contador com diffYMD
+  const d = diffYMD(cfg.start);
+  elDays.textContent = d.days;
+  elMonths.textContent = d.months;
+  elYears.textContent = d.years;
+
+  // galeria
+  elGallery.innerHTML = '';
+  const imgs = images || cfg.images;
+
+  elGallery.style.display = 'grid';
+  elGallery.style.gridTemplateColumns = 'repeat(3, 1fr)';
+  elGallery.style.gap = '12px';
+
+  imgs.forEach((url, idx) => {
+    const div = document.createElement('div');
+    div.className = 'photo';
+    div.style.position = 'relative';
+
+    if(url){
+      const img = document.createElement('img');
+      img.src = url;
+      img.style.width = '100%';
+      img.style.borderRadius = '8px';
+      img.style.display = 'block';
+      div.appendChild(img);
+
+      // botão excluir
+      const btn = document.createElement('button');
+      btn.textContent = '×';
+      btn.className = 'delete-btn';
+      btn.style.position = 'absolute';
+      btn.style.top = '6px';
+      btn.style.right = '6px';
+      btn.style.background = 'rgba(0,0,0,0.5)';
+      btn.style.color = 'white';
+      btn.style.border = 'none';
+      btn.style.borderRadius = '50%';
+      btn.style.width = '24px';
+      btn.style.height = '24px';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => {
+        currentConfig.images.splice(idx, 1);
+        localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
+        render(currentConfig.images);
+      };
+      div.appendChild(btn);
+
+    } else {
+      // placeholder de foto
+      div.textContent = '📷';
+      div.style.fontSize = '2rem';
+      div.style.color = 'rgba(255,255,255,.3)';
+      div.style.display = 'grid';
+      div.style.placeItems = 'center';
+      div.style.aspectRatio = '1/1';
+      div.style.borderRadius = '8px';
+      div.style.background = 'rgba(255,255,255,0.05)';
+    }
+
+    elGallery.appendChild(div);
+  });
+}
+
+
+function typeText(el, text, speed=28){
+  el.innerHTML='';
+  let i=0;
+  function step(){ 
+    if(i<=text.length){ 
+      el.textContent=text.slice(0,i); 
+      i++; 
+      requestAnimationFrame(()=>setTimeout(step,speed)); 
+    } 
+  }
+  step();
+}
+
+// aplicar alterações
+applyBtn.addEventListener('click', ()=>{
+  const imgs = inpImgs.value.split(/\n|\r/).filter(Boolean);
+  currentConfig = {
+    to: inpTo.value.trim() || DEFAULTS.to,
+    from: inpFrom.value.trim() || DEFAULTS.from,
+    start: inpStart.value.trim() || DEFAULTS.start,
+    msg: inpMsg.value.trim() || DEFAULTS.msg,
+    images: [...imgs, ...currentConfig.images.filter(i=>i.startsWith('data:'))]
+  };
+  localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
+  render(currentConfig.images);
+  status.textContent = 'Alterações aplicadas!';
+});
+
+function loadFormFromConfig(){
+  inpTo.value = currentConfig.to;
+  inpFrom.value = currentConfig.from;
+  inpStart.value = currentConfig.start;
+  inpMsg.value = currentConfig.msg;
+  const imgs = currentConfig.images.filter(i=>i.startsWith('http'));
+  inpImgs.value = imgs.join('\n');
+  render(currentConfig.images);
+}
+
+// gerar link só com URLs
+function buildLink(){
+  const u = new URL(location.href.split('#')[0]);
+  const params = new URLSearchParams();
+  if(currentConfig.to) params.set('to', currentConfig.to);
+  if(currentConfig.from) params.set('from', currentConfig.from);
+  if(currentConfig.start) params.set('start', currentConfig.start);
+  if(currentConfig.msg) params.set('msg', encodeURIComponent(currentConfig.msg));
+  const imgs = currentConfig.images.filter(s=>s.startsWith('http')).slice(0,50);
+  imgs.forEach((url,i)=> params.set('img'+(i+1), url));
+  u.search = params.toString();
+  return u.toString();
+}
+
+document.getElementById('genLink').addEventListener('click', ()=>{
+  const link = buildLink();
+  out.value = link;
+  status.textContent = 'Link gerado!';
+  render(currentConfig.images);
+});
+
+document.getElementById('copyLink').addEventListener('click', async ()=>{
+  if(!out.value) out.value = buildLink();
+  try{ await navigator.clipboard.writeText(out.value); status.textContent='Copiado ✅'; }
+  catch(e){ status.textContent='Não foi possível copiar :('; }
+});
+
+openBtn.addEventListener('click', ()=>{ modal.classList.add('open'); loadFormFromConfig(); });
+closeBtn.addEventListener('click', ()=> modal.classList.remove('open'));
+
+// upload fotos locais
+inpFiles.addEventListener('change', (e)=>{
+  const files = Array.from(e.target.files);
+  files.forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentConfig.images.push(ev.target.result);
+      localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
+      render(currentConfig.images);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+// textarea links muda
+inpImgs.addEventListener('input', ()=>{
+  const imgs = inpImgs.value.split(/\n|\r/).filter(s=>s.startsWith('http'));
+  currentConfig.images = imgs.concat(currentConfig.images.filter(i=>i.startsWith('data:')));
+  localStorage.setItem("loveConfig", JSON.stringify(currentConfig));
+  render(currentConfig.images);
+});
+
+// inicial
+render(currentConfig.images);
+if(qpGet('to')) document.getElementById('sub').textContent = `Esta surpresa foi feita com carinho só para você, ${qp.get('to')} ✨`;
+</script>
+
+
+
+
+
+</body>
+</html>
